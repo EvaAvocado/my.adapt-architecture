@@ -1,0 +1,265 @@
+openapi: 3.0.3
+info: {title: my.adapt — сервис рейтинга, version: 1.0.0}
+servers:
+- {url: /api/v1}
+security: []
+paths:
+  /sessions:
+    post:
+      operationId: createSession
+      summary: Получить токен установки
+      description: Клиент заранее сохраняет playerId и случайный installationKey. При первом обращении сервер сохраняет
+        хеш ключа; при повторном проверяет его и выдаёт новый токен. Повтор после таймаута не создаёт другого участника.
+        Ключ не включается в журналы.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SessionRequest'}
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Session'}
+        '400': {$ref: '#/components/responses/Error400'}
+        '401': {$ref: '#/components/responses/Error401'}
+        '429': {$ref: '#/components/responses/Error429'}
+        '503': {$ref: '#/components/responses/Error503'}
+  /leaderboard/results:
+    post:
+      operationId: submitResult
+      summary: Принять результат раунда
+      description: Участник определяется из sub токена. Ключ повтора — участник и roundId. Точный повтор возвращает
+        исходную квитанцию; изменённые данные того же раунда — 409. Квитанция и улучшение рекорда сохраняются одной
+        транзакцией. Время сравнивается строго. Никнейм после удаления крайних пробелов должен соответствовать ограничениям
+        схемы.
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ResultRequest'}
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Receipt'}
+        '400': {$ref: '#/components/responses/Error400'}
+        '401': {$ref: '#/components/responses/Error401'}
+        '409': {$ref: '#/components/responses/Error409'}
+        '429': {$ref: '#/components/responses/Error429'}
+        '503': {$ref: '#/components/responses/Error503'}
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      summary: Получить топ
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Leaderboard'}
+        '429': {$ref: '#/components/responses/Error429'}
+        '503': {$ref: '#/components/responses/Error503'}
+      parameters:
+      - name: limit
+        in: query
+        description: Количество строк топа
+        schema: {type: integer, minimum: 1, maximum: 100, default: 10}
+  /leaderboard/me:
+    get:
+      operationId: getOwnRecord
+      summary: Получить свой рекорд и место
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OwnRecord'}
+        '401': {$ref: '#/components/responses/Error401'}
+        '404': {$ref: '#/components/responses/Error404'}
+        '429': {$ref: '#/components/responses/Error429'}
+        '503': {$ref: '#/components/responses/Error503'}
+      description: Участник определяется из sub токена; его идентификатор не передаётся в URL.
+  /leaderboard/stats:
+    get:
+      operationId: getStatistics
+      summary: Получить статистику рейтинга
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Stats'}
+        '429': {$ref: '#/components/responses/Error429'}
+        '503': {$ref: '#/components/responses/Error503'}
+      description: players — число участников с рекордом; при нуле bestTimeMs равен null.
+  /leaderboard/rules:
+    get:
+      operationId: getRules
+      summary: Получить ограничения и порядок рейтинга
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Rules'}
+        '429': {$ref: '#/components/responses/Error429'}
+        '503': {$ref: '#/components/responses/Error503'}
+  /releases/latest:
+    get:
+      operationId: getLatestRelease
+      summary: Получить опубликованную сборку
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Release'}
+        '429': {$ref: '#/components/responses/Error429'}
+        '503': {$ref: '#/components/responses/Error503'}
+components:
+  securitySchemes:
+    BearerAuth: {type: http, scheme: bearer, bearerFormat: JWT}
+  schemas:
+    SessionRequest:
+      type: object
+      additionalProperties: false
+      required: [playerId, installationKey]
+      properties:
+        playerId: &id001 {type: string, format: uuid}
+        installationKey: {type: string, minLength: 43, maxLength: 43, pattern: '^[A-Za-z0-9_-]{43}$', writeOnly: true}
+    Session:
+      type: object
+      additionalProperties: false
+      required: [playerId, accessToken, tokenType, expiresIn]
+      properties:
+        playerId: *id001
+        accessToken: {type: string, minLength: 1, maxLength: 4096}
+        tokenType:
+          type: string
+          enum: [Bearer]
+        expiresIn:
+          type: integer
+          enum: [900]
+    ResultRequest:
+      type: object
+      additionalProperties: false
+      required: [roundId, nickname, timeMs]
+      properties:
+        roundId: *id001
+        nickname: &id003 {type: string, minLength: 3, maxLength: 20, pattern: '^[A-Za-zА-Яа-яЁё0-9 _-]{3,20}$'}
+        timeMs: &id002 {type: integer, minimum: 10000, maximum: 7200000}
+    Receipt:
+      type: object
+      additionalProperties: false
+      required: [roundId, improved, bestTimeMs]
+      properties:
+        roundId: *id001
+        improved: {type: boolean}
+        bestTimeMs: *id002
+    PublicRow:
+      type: object
+      additionalProperties: false
+      required: [rank, nickname, timeMs]
+      properties:
+        rank: &id004 {type: integer, minimum: 1}
+        nickname: *id003
+        timeMs: *id002
+    Leaderboard:
+      type: object
+      additionalProperties: false
+      required: [rows]
+      properties:
+        rows:
+          type: array
+          maxItems: 100
+          items: {$ref: '#/components/schemas/PublicRow'}
+    OwnRecord:
+      type: object
+      additionalProperties: false
+      required: [rank, nickname, timeMs, roundId]
+      properties:
+        rank: *id004
+        nickname: *id003
+        timeMs: *id002
+        roundId: *id001
+    Stats:
+      type: object
+      additionalProperties: false
+      required: [players, bestTimeMs]
+      properties:
+        players: {type: integer, minimum: 0}
+        bestTimeMs: {type: integer, minimum: 10000, maximum: 7200000, nullable: true}
+    Rules:
+      type: object
+      additionalProperties: false
+      required: [minTimeMs, maxTimeMs, nicknameMin, nicknameMax, nicknamePattern, sort]
+      properties:
+        minTimeMs:
+          type: integer
+          enum: [10000]
+        maxTimeMs:
+          type: integer
+          enum: [7200000]
+        nicknameMin:
+          type: integer
+          enum: [3]
+        nicknameMax:
+          type: integer
+          enum: [20]
+        nicknamePattern:
+          type: string
+          enum: ['^[A-Za-zА-Яа-яЁё0-9 _-]{3,20}$']
+        sort:
+          type: string
+          enum: ['timeMs,achievedAt,playerId']
+    Release:
+      type: object
+      additionalProperties: false
+      required: [version, downloadUrl]
+      properties:
+        version: {type: string, minLength: 1, maxLength: 32}
+        downloadUrl: {type: string, format: uri, pattern: '^https://', maxLength: 2048}
+    Error:
+      type: object
+      additionalProperties: false
+      required: [message]
+      properties:
+        message: {type: string, minLength: 1, maxLength: 200}
+  responses:
+    Error400:
+      description: Некорректные данные
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Error401:
+      description: Нет действительных учётных данных
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Error404:
+      description: Рекорд ещё не установлен
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Error409:
+      description: Повтор раунда с другими данными
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Error429:
+      description: Слишком много запросов
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Error503:
+      description: Сервис временно недоступен
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}

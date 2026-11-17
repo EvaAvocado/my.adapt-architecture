@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" version="24.7.17">
+  <diagram name="System Context">
+    <mxGraphModel dx="1400" dy="1200" grid="1" page="1" pageWidth="1400" pageHeight="1200">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="p" value="Игрок&#10;[Человек]" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="100" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="v" value="Посетитель сайта&#10;[Человек]" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="420" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="s" value="my.adapt&#10;[Программная система]&#10;Игра, рейтинг и сайт" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#08427B;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="520" y="240" width="300" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="c" value="Хранилище APK&#10;[Внешняя система]" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="260" width="250" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="e0" value="Исследует локации, отправляет результат" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="p" target="s" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="Смотрит рейтинг, получает игру" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="v" target="s" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="Использует хранение и загрузку APK" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="s" target="c" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="Container">
+    <mxGraphModel dx="1400" dy="1200" grid="1" page="1" pageWidth="1400" pageHeight="1200">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="boundary" value="my.adapt — граница системы" style="rounded=1;dashed=1;fillColor=none;strokeColor=#63738A;verticalAlign=top;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="30" y="185" width="1240" height="690" as="geometry" />
+        </mxCell>
+        <mxCell id="p" value="Игрок&#10;[Человек]" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="40" y="50" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="v" value="Посетитель сайта&#10;[Человек]" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="50" width="230" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="g" value="Мобильная игра&#10;Unity / C# / Android" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#1168BD;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="80" y="240" width="270" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="w" value="Веб-интерфейс&#10;HTML / CSS / JavaScript" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#1168BD;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="950" y="240" width="270" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="l" value="Локальные данные&#10;Контент, прогресс, раунды" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;shape=cylinder;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="270" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="a" value="Веб-сервис&#10;ASP.NET Core&#10;Токены, рейтинг, описание сборки" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#1168BD;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="510" y="430" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="d" value="SQLite&#10;Участники, рекорды, квитанции" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;shape=cylinder;" vertex="1" parent="1">
+          <mxGeometry x="510" y="710" width="300" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c" value="Внешнее хранилище APK" style="rounded=1;whiteSpace=wrap;html=0;fillColor=#667788;fontColor=#FFFFFF;fontSize=16;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1030" y="950" width="270" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="e0" value="Касания и QR-коды" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="p" target="g" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="Браузер" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="v" target="w" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="Чтение и сохранение" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="g" target="l" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="HTTPS / JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="g" target="a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="HTTPS / файлы сайта и API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="w" target="a" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="SQL / транзакции" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="a" target="d" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="HTTPS / скачать APK" style="edgeStyle=orthogonalEdgeStyle;rounded=0;endArrow=block;html=0;fontSize=13;" edge="1" source="w" target="c" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
